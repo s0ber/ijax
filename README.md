@@ -12,7 +12,7 @@ You need to create an instance of Ijax class, and then work with this instance. 
 
 ### ijax.get(path)
 
-#### [IjaxRequest]
+**[IjaxRequest]**
 
 This will create a new request to provided path. Request will have unique id, which will be added to query string.
 Once request is created, you need to push data to browser from responding iframe with following methods.

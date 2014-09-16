@@ -1,16 +1,13 @@
 IjaxRequest = modula.require('ijax/request')
 
 describe 'IjaxRequest', ->
-  beforeEach ->
-    @originalCreateIframeRequest = IjaxRequest::createIframeRequest
-    IjaxRequest::createIframeRequest = sinon.spy ->
-      $('<iframe />')[0]
 
+  beforeEach ->
+    sinon.stub(IjaxRequest::, 'createIframeRequest').returns $('<iframe />')[0]
     @request = new IjaxRequest('/some_path')
 
   afterEach ->
-    IjaxRequest::createIframeRequest = @originalCreateIframeRequest
-
+    IjaxRequest::createIframeRequest.restore?()
 
   describe '#constructor', ->
     it 'sets unique id for request', ->
@@ -61,7 +58,7 @@ describe 'IjaxRequest', ->
   describe '#createIframeRequest', ->
     it 'creates iframe with @id in name/id and @path in src', ->
       @request = new IjaxRequest('/some_path')
-      @request.createIframeRequest = @originalCreateIframeRequest
+      @request.createIframeRequest.restore()
 
       iframe = @request.createIframeRequest(false)
 

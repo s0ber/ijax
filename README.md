@@ -4,6 +4,10 @@ Ijax
 
 Library for creating GET ajax requests via iframe. There is also built-in support for streaming parts of data via iframe.
 
+## Why would anyone ever need this?
+
+If you reading this, then you might be interested of why would someone will need stuff like this. The truth is, that at current point in time iframe it the only cross-browser way of executing code snippets while receiving them from server. It means, that you can execute code as fast, as you receive it. You don't need to wait for a whole content to start working with a response. You can get data (for example, html) from server by chunks, and show those chunks immediately. When used properly, this can improve user experience a lot. Such approach is used by VK and Facebook. But with this library you can easily apply it to your web application.
+
 ## API
 
 You need to create an instance of Ijax class, and then work with this instance. It'll have following methods.
@@ -65,7 +69,3 @@ This callback will be called, when server will push a fragment of a page. Id of 
 
 This callback will be called, when response will be completely resolved by server and server will close a connection.
 
-
-## Why would anyone ever need this?
-
-If you reading this, then you might be interested of why would someone will need stuff like this. The truth is, that at current point in time iframe it the only cross-browser way of executing code snippets while receiving them from server. It means, that you can execute code as fast, as you receive it. You don't need to wait for a whole content to start working with a response. You can get data (for example, html) from server by chunks, and show those chunks immediately. When used properly, this can improve user experience a lot. Such approach is used by VK and Facebook. But with this library you can easily apply it to your web application.

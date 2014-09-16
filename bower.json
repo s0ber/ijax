@@ -1,0 +1,23 @@
+{
+  "name": "ijax",
+  "version": "0.1.0",
+  "homepage": "https://github.com/s0ber/ijax",
+  "authors": [
+    "Sergey Shishkalov <sergeyshishkalov@gmail.com>"
+  ],
+  "description": "DESCRIPTION",
+  "main": "build/ijax.min.js",
+
+  "dependencies": {
+    "jquery": "",
+    "underscore": ""
+  },
+
+  "license": "MIT",
+  "private": false,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components"
+  ]
+}

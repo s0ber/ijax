@@ -15,16 +15,11 @@ You need to create an instance of Ijax class, and then work with this instance. 
 **[IjaxRequest]**
 
 This will create a new request to provided path. Request will have unique id, which will be added to query string.
-Once request is created, you need to push data to browser from responding iframe with following methods.
-Request object will be returned.
+Request object will be returned. Once request is created, you need to push data to browser from responding iframe with following methods (in a following order).
 
 ### ijax.registerResponse(requestId)
 
-This will resolve your GET request, and ```.done``` callback for a request will be called, with response object provided to it.
-
-### ijax.resolveResponse()
-
-This will finally resolve a response for a request.
+This will resolve your GET request, and ```.done``` callback for a request will be called, with response object provided to it. You can push data to this response with next two methods.
 
 ### ijax.pushLayout(html)
 
@@ -33,6 +28,10 @@ This will push some data to a response ```.onLayoutReceive``` callback.
 ### ijax.pushFrame(frameId, frameHtml)
 
 This will push some partial data to a response ```.onFrameReceive``` callback.
+
+### ijax.resolveResponse()
+
+This will finally resolve a response for a request.
 
 
 ## class IjaxRequest

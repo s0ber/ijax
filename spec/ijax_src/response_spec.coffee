@@ -3,11 +3,15 @@ IjaxResponse = modula.require('ijax/response')
 describe 'IjaxResponse', ->
 
   beforeEach ->
-    @response = new IjaxResponse()
+    @responseOptions = {a: 1, b: 2}
+    @response = new IjaxResponse(@responseOptions)
 
   describe '#constructor', ->
     it 'sets @isResolved flag as false', ->
       expect(@response.isResolved).to.be.false
+
+    it 'saves provided options in @options', ->
+      expect(@response.options).to.be.equal @responseOptions
 
   describe '#onResolve', ->
     it 'saves provided callback in @onResolveCallback', ->
@@ -28,6 +32,13 @@ describe 'IjaxResponse', ->
       @response.onResolve fn
       @response.resolve()
       expect(fn).to.be.calledOnce
+
+    it "provides response's options to @onResolveCallback", ->
+      fn = sinon.spy()
+      @response.onResolve fn
+      @response.resolve()
+      expect(fn).to.be.calledOnce
+      expect(fn.lastCall.args).to.be.eql [@responseOptions]
 
   describe 'onLayoutReceive', ->
     it 'saves provided callback in @onResolveCallback', ->

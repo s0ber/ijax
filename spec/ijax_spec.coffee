@@ -131,6 +131,13 @@ describe 'Ijax', ->
       expect(@ijax.curRequest.resolve).to.be.calledOnce
       expect(@ijax.curRequest.registerResponse).to.be.calledBefore @ijax.curRequest.resolve
 
+    context 'response options are passed', ->
+      it 'registers response with provided response options', ->
+        options = {a: 1, b: 2}
+        @ijax.registerResponse('unique_id', options)
+        expect(@ijax.curRequest.registerResponse).to.be.calledOnce
+        expect(@ijax.curRequest.registerResponse.lastCall.args).to.be.eql [options]
+
   describe '#resolveResponse', ->
     beforeEach ->
       @ijax.removeRequest = sinon.spy()

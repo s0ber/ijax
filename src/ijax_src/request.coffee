@@ -24,8 +24,8 @@ class IjaxRequest
     document.body.appendChild(iframe) if appendToDom
     iframe
 
-  registerResponse: ->
-    @response = new @IjaxResponse()
+  registerResponse: (responseOptions) ->
+    @response = new @IjaxResponse(responseOptions)
 
   done: (@onDoneCallback) ->
     @

@@ -1,6 +1,6 @@
 class IjaxResponse
 
-  constructor: ->
+  constructor: (@options) ->
     @isResolved = false
 
   onResolve: (@onResolveCallback) ->
@@ -14,7 +14,7 @@ class IjaxResponse
 
   resolve: ->
     @isResolved = true
-    @onResolveCallback?()
+    @onResolveCallback?(@options)
 
   addLayout: (layoutHtml) ->
     @onLayoutReceiveCallback?(layoutHtml)

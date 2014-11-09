@@ -24,8 +24,8 @@ window.Ijax = class
     delete @requests[request.id]
     delete @curRequest
 
-  registerResponse: (requestId) ->
-    @curRequest.registerResponse()
+  registerResponse: (requestId, responseOptions) ->
+    @curRequest.registerResponse(responseOptions)
     @curRequest.resolve()
 
   resolveResponse: ->

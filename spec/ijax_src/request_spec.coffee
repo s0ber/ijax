@@ -75,6 +75,14 @@ describe 'IjaxRequest', ->
       expect(@request.IjaxResponse).to.be.calledOnce
       expect(@request.response).to.be.instanceOf @request.IjaxResponse
 
+    it 'provides response options to IjaxResponse constructor', ->
+      sinon.spy(@request, 'IjaxResponse')
+      options = {a: 1, b: 2}
+      @request.registerResponse(options)
+
+      expect(@request.IjaxResponse).to.be.calledOnce
+      expect(@request.IjaxResponse.lastCall.args).to.be.eql [options]
+
   describe '#resolve', ->
     it 'sets request as resolved', ->
       @request.resolve()

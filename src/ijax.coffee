@@ -1,5 +1,17 @@
 window.Ijax = class
 
+  Configuration = modula.require('ijax/configuration')
+
+# static
+
+  @config: ->
+    @_config ?= new Configuration()
+
+  @configure: (options) ->
+    _.extend(@config(), options)
+
+# public
+
   constructor: ->
     @IjaxRequest = modula.require('ijax/request')
     @requests = {}

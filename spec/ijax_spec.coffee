@@ -5,6 +5,18 @@ describe 'Ijax', ->
   beforeEach ->
     @ijax = new Ijax()
 
+  describe '.configure', ->
+    it 'extends default configuration', ->
+      onResponseResolve = sinon.spy()
+      onResponseFail = sinon.spy()
+
+      Ijax.configure {onResponseResolve, onResponseFail}
+      expect(Ijax.config().onResponseResolve).to.be.eql onResponseResolve
+      expect(Ijax.config().onResponseFail).to.be.eql onResponseFail
+
+      # resetting memoized configuration
+      Ijax._config = null
+
   describe '#constructor', ->
     it 'creates an object for storing all ijax requests', ->
       expect(@ijax.requests).to.be.eql {}

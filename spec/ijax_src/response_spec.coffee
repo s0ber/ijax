@@ -27,13 +27,14 @@ describe 'IjaxResponse', ->
       @response.resolve()
       expect(@response.isResolved).to.be.true
 
-    it 'calls @onResolveCallback', ->
-      fn = sinon.spy()
-      @response.onResolve fn
+    it "calls configured Ijax.config().onResponseResolve callback with response and it's options provided", ->
+      sinon.spy(Ijax.config(), 'onResponseResolve')
       @response.resolve()
-      expect(fn).to.be.calledOnce
+      expect(Ijax.config().onResponseResolve).to.be.calledOnce
+      expect(Ijax.config().onResponseResolve.lastCall.args).to.be.eql [@response, @responseOptions]
+      Ijax.config().onResponseResolve.restore()
 
-    it "provides response's options to @onResolveCallback", ->
+    it 'calls @onResolveCallback with response options provided', ->
       fn = sinon.spy()
       @response.onResolve fn
       @response.resolve()

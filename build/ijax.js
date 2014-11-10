@@ -1,4 +1,4 @@
-/*! ijax (v0.1.2),
+/*! ijax (v0.1.3),
  ,
  by Sergey Shishkalov <sergeyshishkalov@gmail.com>
  Mon Nov 10 2014 */
@@ -32,7 +32,7 @@
   Configuration = (function() {
     function Configuration() {}
 
-    Configuration.prototype.onResponseResolve = function(response, options) {};
+    Configuration.prototype.onRequestResolve = function(response, options) {};
 
     Configuration.prototype.onResponseFail = function(response, options) {};
 
@@ -141,9 +141,7 @@
 
     IjaxResponse.prototype.resolve = function() {
       this.isResolved = true;
-      if (Ijax.config().onResponseResolve(this, this.options) !== false) {
-        return typeof this.onResolveCallback === "function" ? this.onResolveCallback(this.options) : void 0;
-      }
+      return typeof this.onResolveCallback === "function" ? this.onResolveCallback(this.options) : void 0;
     };
 
     IjaxResponse.prototype.addLayout = function(layoutHtml) {
@@ -218,7 +216,9 @@
 
     IjaxRequest.prototype.resolve = function() {
       this.isResolved = true;
-      return typeof this.onDoneCallback === "function" ? this.onDoneCallback(this.response) : void 0;
+      if (Ijax.config().onRequestResolve(this.response, this.response.options) !== false) {
+        return typeof this.onDoneCallback === "function" ? this.onDoneCallback(this.response) : void 0;
+      }
     };
 
     IjaxRequest.prototype.reject = function() {

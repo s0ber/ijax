@@ -4,7 +4,8 @@ class IjaxRequest
 
   constructor: (path) ->
     @id = @_getGuid()
-    @path = @_updatePathParams(path, format: 'al', i_req_id: @id, full_page: true)
+    @path = path
+    @iframePath = @_updatePathParams(path, format: 'al', i_req_id: @id, full_page: true)
 
     @isResolved = false
     @isRejected = false
@@ -13,7 +14,7 @@ class IjaxRequest
     @iframe.onload = _.bind(@updateIframeStatus, @)
 
   createIframeRequest: (appendToDom = true) ->
-    src = @path or 'javascript:false'
+    src = @iframePath or 'javascript:false'
 
     tmpElem = document.createElement('div')
     tmpElem.innerHTML = "<iframe name=\"#{@id}\" id=\"#{@id}\" src=\"#{src}\">"
@@ -25,6 +26,7 @@ class IjaxRequest
     iframe
 
   registerResponse: (responseOptions) ->
+    responseOptions = _.extend(path: @path, responseOptions)
     @response = new @IjaxResponse(responseOptions)
 
   done: (@onDoneCallback) ->

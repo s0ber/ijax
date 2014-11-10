@@ -1,4 +1,4 @@
-/*! ijax (v0.1.1),
+/*! ijax (v0.1.2),
  ,
  by Sergey Shishkalov <sergeyshishkalov@gmail.com>
  Mon Nov 10 2014 */
@@ -141,8 +141,9 @@
 
     IjaxResponse.prototype.resolve = function() {
       this.isResolved = true;
-      Ijax.config().onResponseResolve(this, this.options);
-      return typeof this.onResolveCallback === "function" ? this.onResolveCallback(this.options) : void 0;
+      if (Ijax.config().onResponseResolve(this, this.options) !== false) {
+        return typeof this.onResolveCallback === "function" ? this.onResolveCallback(this.options) : void 0;
+      }
     };
 
     IjaxResponse.prototype.addLayout = function(layoutHtml) {

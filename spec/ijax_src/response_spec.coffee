@@ -41,6 +41,19 @@ describe 'IjaxResponse', ->
       expect(fn).to.be.calledOnce
       expect(fn.lastCall.args).to.be.eql [@responseOptions]
 
+    context 'Ijax.config().onResponseResolve returns false', ->
+      it "doesn't call @onResolveCallback", ->
+        Ijax.configure(onResponseResolve: -> false)
+        fn = sinon.spy()
+        @response.onResolve fn
+        @response.resolve()
+        expect(fn).to.be.not.called
+
+        Ijax.configure(onResponseResolve: -> true)
+        @response.resolve()
+        expect(fn).to.be.calledOnce
+        Ijax._config = null
+
   describe 'onLayoutReceive', ->
     it 'saves provided callback in @onResolveCallback', ->
       fn = ->

@@ -1,7 +1,7 @@
-/*! ijax (v0.1.0),
+/*! ijax (v0.1.1),
  ,
  by Sergey Shishkalov <sergeyshishkalov@gmail.com>
- Tue Sep 16 2014 */
+ Mon Nov 10 2014 */
 (function() {
   var modules;
 
@@ -27,7 +27,37 @@
 }).call(this);
 
 (function() {
+  var Configuration;
+
+  Configuration = (function() {
+    function Configuration() {}
+
+    Configuration.prototype.onResponseResolve = function(response, options) {};
+
+    Configuration.prototype.onResponseFail = function(response, options) {};
+
+    return Configuration;
+
+  })();
+
+  modula["export"]('ijax/configuration', Configuration);
+
+}).call(this);
+
+(function() {
   window.Ijax = (function() {
+    var Configuration;
+
+    Configuration = modula.require('ijax/configuration');
+
+    _Class.config = function() {
+      return this._config != null ? this._config : this._config = new Configuration();
+    };
+
+    _Class.configure = function(options) {
+      return _.extend(this.config(), options);
+    };
+
     function _Class() {
       this.IjaxRequest = modula.require('ijax/request');
       this.requests = {};
@@ -59,8 +89,8 @@
       return delete this.curRequest;
     };
 
-    _Class.prototype.registerResponse = function(requestId) {
-      this.curRequest.registerResponse();
+    _Class.prototype.registerResponse = function(requestId, responseOptions) {
+      this.curRequest.registerResponse(responseOptions);
       return this.curRequest.resolve();
     };
 
@@ -89,7 +119,8 @@
   var IjaxResponse;
 
   IjaxResponse = (function() {
-    function IjaxResponse() {
+    function IjaxResponse(options) {
+      this.options = options;
       this.isResolved = false;
     }
 
@@ -110,7 +141,8 @@
 
     IjaxResponse.prototype.resolve = function() {
       this.isResolved = true;
-      return typeof this.onResolveCallback === "function" ? this.onResolveCallback() : void 0;
+      Ijax.config().onResponseResolve(this, this.options);
+      return typeof this.onResolveCallback === "function" ? this.onResolveCallback(this.options) : void 0;
     };
 
     IjaxResponse.prototype.addLayout = function(layoutHtml) {
@@ -138,7 +170,8 @@
 
     function IjaxRequest(path) {
       this.id = this._getGuid();
-      this.path = this._updatePathParams(path, {
+      this.path = path;
+      this.iframePath = this._updatePathParams(path, {
         format: 'al',
         i_req_id: this.id,
         full_page: true
@@ -154,7 +187,7 @@
       if (appendToDom == null) {
         appendToDom = true;
       }
-      src = this.path || 'javascript:false';
+      src = this.iframePath || 'javascript:false';
       tmpElem = document.createElement('div');
       tmpElem.innerHTML = "<iframe name=\"" + this.id + "\" id=\"" + this.id + "\" src=\"" + src + "\">";
       iframe = tmpElem.firstChild;
@@ -165,8 +198,11 @@
       return iframe;
     };
 
-    IjaxRequest.prototype.registerResponse = function() {
-      return this.response = new this.IjaxResponse();
+    IjaxRequest.prototype.registerResponse = function(responseOptions) {
+      responseOptions = _.extend({
+        path: this.path
+      }, responseOptions);
+      return this.response = new this.IjaxResponse(responseOptions);
     };
 
     IjaxRequest.prototype.done = function(onDoneCallback) {

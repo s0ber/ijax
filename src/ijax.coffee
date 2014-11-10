@@ -1,5 +1,17 @@
 window.Ijax = class
 
+  Configuration = modula.require('ijax/configuration')
+
+# static
+
+  @config: ->
+    @_config ?= new Configuration()
+
+  @configure: (options) ->
+    _.extend(@config(), options)
+
+# public
+
   constructor: ->
     @IjaxRequest = modula.require('ijax/request')
     @requests = {}
@@ -24,8 +36,8 @@ window.Ijax = class
     delete @requests[request.id]
     delete @curRequest
 
-  registerResponse: (requestId) ->
-    @curRequest.registerResponse()
+  registerResponse: (requestId, responseOptions) ->
+    @curRequest.registerResponse(responseOptions)
     @curRequest.resolve()
 
   resolveResponse: ->

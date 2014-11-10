@@ -5,6 +5,18 @@ describe 'Ijax', ->
   beforeEach ->
     @ijax = new Ijax()
 
+  describe '.configure', ->
+    it 'extends default configuration', ->
+      onResponseResolve = sinon.spy()
+      onResponseFail = sinon.spy()
+
+      Ijax.configure {onResponseResolve, onResponseFail}
+      expect(Ijax.config().onResponseResolve).to.be.eql onResponseResolve
+      expect(Ijax.config().onResponseFail).to.be.eql onResponseFail
+
+      # resetting memoized configuration
+      Ijax._config = null
+
   describe '#constructor', ->
     it 'creates an object for storing all ijax requests', ->
       expect(@ijax.requests).to.be.eql {}
@@ -130,6 +142,13 @@ describe 'Ijax', ->
       @ijax.registerResponse()
       expect(@ijax.curRequest.resolve).to.be.calledOnce
       expect(@ijax.curRequest.registerResponse).to.be.calledBefore @ijax.curRequest.resolve
+
+    context 'response options are passed', ->
+      it 'registers response with provided response options', ->
+        options = {a: 1, b: 2}
+        @ijax.registerResponse('unique_id', options)
+        expect(@ijax.curRequest.registerResponse).to.be.calledOnce
+        expect(@ijax.curRequest.registerResponse.lastCall.args).to.be.eql [options]
 
   describe '#resolveResponse', ->
     beforeEach ->

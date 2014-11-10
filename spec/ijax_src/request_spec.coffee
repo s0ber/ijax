@@ -18,7 +18,10 @@ describe 'IjaxRequest', ->
       expect(@request.id).to.be.not.eql @anotherRequest.id
 
     it 'saves provided path in @path, but with format, request id and full page params specified', ->
-      expect(@request.path).to.be.eql "/some_path?format=al&i_req_id=#{@request.id}&full_page=true"
+      expect(@request.path).to.be.eql "/some_path"
+
+    it 'saves path with format, request id and full page params specified in @iframePath', ->
+      expect(@request.iframePath).to.be.eql "/some_path?format=al&i_req_id=#{@request.id}&full_page=true"
 
     it 'creates isResolved and isRejected false flags', ->
       expect(@request.isResolved).to.be.false
@@ -56,7 +59,7 @@ describe 'IjaxRequest', ->
       expect(@request.fail(->)).to.be.equal @request
 
   describe '#createIframeRequest', ->
-    it 'creates iframe with @id in name/id and @path in src', ->
+    it 'creates iframe with @id in name/id and @iframePath in src', ->
       @request = new IjaxRequest('/some_path')
       @request.createIframeRequest.restore()
 
@@ -65,7 +68,7 @@ describe 'IjaxRequest', ->
       expect(iframe.style.display).to.be.eql 'none'
       expect(iframe.id).to.be.eql @request.id
       expect($(iframe).attr('name')).to.be.eql @request.id
-      expect($(iframe).attr('src')).to.be.eql @request.path
+      expect($(iframe).attr('src')).to.be.eql @request.iframePath
 
   describe '#registerResponse', ->
     it 'creates new IjaxResponse object in @response', ->
@@ -74,6 +77,14 @@ describe 'IjaxRequest', ->
 
       expect(@request.IjaxResponse).to.be.calledOnce
       expect(@request.response).to.be.instanceOf @request.IjaxResponse
+
+    it 'provides response options with request path to IjaxResponse constructor', ->
+      sinon.spy(@request, 'IjaxResponse')
+      options = {a: 1, b: 2}
+      @request.registerResponse(options)
+
+      expect(@request.IjaxResponse).to.be.calledOnce
+      expect(@request.IjaxResponse.lastCall.args).to.be.eql [{path: '/some_path', a: 1, b: 2}]
 
   describe '#resolve', ->
     it 'sets request as resolved', ->

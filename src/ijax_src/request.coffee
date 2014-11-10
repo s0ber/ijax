@@ -37,7 +37,8 @@ class IjaxRequest
 
   resolve: ->
     @isResolved = true
-    @onDoneCallback?(@response)
+    unless Ijax.config().onRequestResolve(@response, @response.options) is false
+      @onDoneCallback?(@response)
 
   reject: ->
     @isRejected = true

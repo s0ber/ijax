@@ -27,32 +27,12 @@ describe 'IjaxResponse', ->
       @response.resolve()
       expect(@response.isResolved).to.be.true
 
-    it "calls configured Ijax.config().onResponseResolve callback with response and it's options provided", ->
-      sinon.spy(Ijax.config(), 'onResponseResolve')
-      @response.resolve()
-      expect(Ijax.config().onResponseResolve).to.be.calledOnce
-      expect(Ijax.config().onResponseResolve.lastCall.args).to.be.eql [@response, @responseOptions]
-      Ijax.config().onResponseResolve.restore()
-
     it 'calls @onResolveCallback with response options provided', ->
       fn = sinon.spy()
       @response.onResolve fn
       @response.resolve()
       expect(fn).to.be.calledOnce
       expect(fn.lastCall.args).to.be.eql [@responseOptions]
-
-    context 'Ijax.config().onResponseResolve returns false', ->
-      it "doesn't call @onResolveCallback", ->
-        Ijax.configure(onResponseResolve: -> false)
-        fn = sinon.spy()
-        @response.onResolve fn
-        @response.resolve()
-        expect(fn).to.be.not.called
-
-        Ijax.configure(onResponseResolve: -> true)
-        @response.resolve()
-        expect(fn).to.be.calledOnce
-        Ijax._config = null
 
   describe 'onLayoutReceive', ->
     it 'saves provided callback in @onResolveCallback', ->

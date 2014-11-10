@@ -88,6 +88,7 @@ describe 'IjaxRequest', ->
 
   describe '#resolve', ->
     it 'sets request as resolved', ->
+      @request.registerResponse()
       @request.resolve()
       expect(@request.isResolved).to.be.true
 
@@ -99,6 +100,29 @@ describe 'IjaxRequest', ->
 
       expect(fn).to.be.calledOnce
       expect(fn.lastCall.args).to.be.eql [@request.response]
+
+    it "calls configured Ijax.config().onRequestResolve callback with response and it's options provided", ->
+      sinon.spy(Ijax.config(), 'onRequestResolve')
+      @request.registerResponse()
+      @request.resolve()
+
+      expect(Ijax.config().onRequestResolve).to.be.calledOnce
+      expect(Ijax.config().onRequestResolve.lastCall.args).to.be.eql [@request.response, @request.response.options]
+      Ijax.config().onRequestResolve.restore()
+
+    context 'Ijax.config().onRequestResolve returns false', ->
+      it "doesn't call @onResolveCallback", ->
+        Ijax.configure(onRequestResolve: -> false)
+        fn = sinon.spy()
+        @request.done fn
+        @request.registerResponse()
+        @request.resolve()
+        expect(fn).to.be.not.called
+
+        Ijax.configure(onRequestResolve: -> true)
+        @request.resolve()
+        expect(fn).to.be.calledOnce
+        Ijax._config = null
 
   describe '#reject', ->
     it 'sets request as rejected', ->

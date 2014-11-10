@@ -14,8 +14,7 @@ class IjaxResponse
 
   resolve: ->
     @isResolved = true
-    unless Ijax.config().onResponseResolve(@, @options) is false
-      @onResolveCallback?(@options)
+    @onResolveCallback?(@options)
 
   addLayout: (layoutHtml) ->
     @onLayoutReceiveCallback?(layoutHtml)

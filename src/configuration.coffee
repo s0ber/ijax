@@ -1,6 +1,6 @@
 class Configuration
 
-  onResponseResolve: (response, options) ->
+  onRequestResolve: (response, options) ->
 
   onResponseFail: (response, options) ->
 

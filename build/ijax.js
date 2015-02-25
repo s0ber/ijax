@@ -1,7 +1,7 @@
-/*! ijax (v0.1.3),
+/*! ijax (v0.1.4),
  ,
  by Sergey Shishkalov <sergeyshishkalov@gmail.com>
- Mon Nov 10 2014 */
+ Wed Feb 25 2015 */
 (function() {
   var modules;
 
@@ -32,9 +32,9 @@
   Configuration = (function() {
     function Configuration() {}
 
-    Configuration.prototype.onRequestResolve = function(response, options) {};
+    Configuration.prototype.onRequestResolve = function(response, options, path) {};
 
-    Configuration.prototype.onResponseFail = function(response, options) {};
+    Configuration.prototype.onResponseFail = function(path) {};
 
     return Configuration;
 
@@ -216,7 +216,9 @@
 
     IjaxRequest.prototype.resolve = function() {
       this.isResolved = true;
-      if (Ijax.config().onRequestResolve(this.response, this.response.options) !== false) {
+      if (Ijax.config().onRequestResolve(this.response, this.response.options, this.path) === false) {
+        return this.reject();
+      } else {
         return typeof this.onDoneCallback === "function" ? this.onDoneCallback(this.response) : void 0;
       }
     };
@@ -231,12 +233,14 @@
 
     IjaxRequest.prototype.updateIframeStatus = function() {
       this.removeIframe();
-      if (!this.isResolved) {
+      if (!this.isResolved || !this.response.isResolved) {
         return this.showError();
       }
     };
 
-    IjaxRequest.prototype.showError = function() {};
+    IjaxRequest.prototype.showError = function() {
+      return Ijax.config().onResponseFail(this.path);
+    };
 
     IjaxRequest.prototype.removeIframe = function() {
       var _ref;

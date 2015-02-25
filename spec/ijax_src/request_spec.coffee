@@ -101,13 +101,13 @@ describe 'IjaxRequest', ->
       expect(fn).to.be.calledOnce
       expect(fn.lastCall.args).to.be.eql [@request.response]
 
-    it "calls configured Ijax.config().onRequestResolve callback with response and it's options provided", ->
+    it "calls configured Ijax.config().onRequestResolve callback with response, it's options and request path provided", ->
       sinon.spy(Ijax.config(), 'onRequestResolve')
       @request.registerResponse()
       @request.resolve()
 
       expect(Ijax.config().onRequestResolve).to.be.calledOnce
-      expect(Ijax.config().onRequestResolve.lastCall.args).to.be.eql [@request.response, @request.response.options]
+      expect(Ijax.config().onRequestResolve.lastCall.args).to.be.eql [@request.response, @request.response.options, @request.path]
       Ijax.config().onRequestResolve.restore()
 
     context 'Ijax.config().onRequestResolve returns false', ->
@@ -122,6 +122,26 @@ describe 'IjaxRequest', ->
         Ijax.configure(onRequestResolve: -> true)
         @request.resolve()
         expect(fn).to.be.calledOnce
+        Ijax._config = null
+
+      it 'rejects request', ->
+        Ijax.configure(onRequestResolve: -> false)
+        fn = sinon.spy()
+        sinon.spy(@request, 'reject')
+        @request.done fn
+        @request.registerResponse()
+        @request.resolve()
+        expect(@request.reject).to.be.calledOnce
+        Ijax._config = null
+
+      it "doesn't show error", ->
+        Ijax.configure(onRequestResolve: -> false)
+        fn = sinon.spy()
+        sinon.spy(@request, 'showError')
+        @request.done fn
+        @request.registerResponse()
+        @request.resolve()
+        expect(@request.showError).to.be.not.called
         Ijax._config = null
 
   describe '#reject', ->
@@ -156,8 +176,10 @@ describe 'IjaxRequest', ->
     it 'removes iframe', ->
       sinon.spy(@request, 'removeIframe')
 
-      @request.isResolved = true
       @request.iframe = $('<iframe id="my_iframe" />')[0]
+      @request.registerResponse()
+      @request.resolve()
+      @request.response.resolve()
 
       @request.updateIframeStatus()
       expect(@request.removeIframe).to.be.calledOnce
@@ -166,19 +188,38 @@ describe 'IjaxRequest', ->
       it 'shows error', ->
         sinon.spy(@request, 'showError')
 
-        @request.isResolved = false
         @request.iframe = $('<iframe id="my_iframe" />')[0]
+        @request.updateIframeStatus()
+
+        expect(@request.showError).to.be.calledOnce
+
+    context 'response is not resolved', ->
+      it 'shows error', ->
+        sinon.spy(@request, 'showError')
+
+        @request.iframe = $('<iframe id="my_iframe" />')[0]
+        @request.registerResponse()
+        @request.resolve()
 
         @request.updateIframeStatus()
         expect(@request.showError).to.be.calledOnce
 
-    context 'request is resolved', ->
+    context 'request and response are resolved', ->
       it "doesn't show error", ->
         sinon.spy(@request, 'showError')
 
-        @request.isResolved = true
         @request.iframe = $('<iframe id="my_iframe" />')[0]
+        @request.registerResponse()
+        @request.resolve()
+        @request.response.resolve()
 
         @request.updateIframeStatus()
         expect(@request.showError).to.be.not.called
 
+  describe '#showError', ->
+    it "calls configured Ijax.config().onResponseFail callback with request path provided", ->
+      sinon.spy(Ijax.config(), 'onResponseFail')
+      @request.showError()
+      expect(Ijax.config().onResponseFail).to.be.calledOnce
+      expect(Ijax.config().onResponseFail.lastCall.args).to.be.eql [@request.path]
+      Ijax._config = null

@@ -37,7 +37,9 @@ class IjaxRequest
 
   resolve: ->
     @isResolved = true
-    unless Ijax.config().onRequestResolve(@response, @response.options) is false
+    if Ijax.config().onRequestResolve(@response, @response.options, @path) is false
+      @reject()
+    else
       @onDoneCallback?(@response)
 
   reject: ->
@@ -47,10 +49,11 @@ class IjaxRequest
 
   updateIframeStatus: ->
     @removeIframe()
-    @showError() unless @isResolved
+    if not @isResolved or not @response.isResolved
+      @showError()
 
   showError: ->
-    # console.log 'PIZDEC'
+    Ijax.config().onResponseFail(@path)
 
   removeIframe: ->
     @iframe.parentNode?.removeChild(@iframe)

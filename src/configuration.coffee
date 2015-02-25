@@ -1,7 +1,7 @@
 class Configuration
 
-  onRequestResolve: (response, options) ->
+  onRequestResolve: (response, options, path) ->
 
-  onResponseFail: (response, options) ->
+  onResponseFail: (path) ->
 
 modula.export('ijax/configuration', Configuration)

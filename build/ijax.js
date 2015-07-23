@@ -1,7 +1,7 @@
-/*! ijax (v0.1.4),
+/*! ijax (v0.2.1),
  ,
  by Sergey Shishkalov <sergeyshishkalov@gmail.com>
- Wed Feb 25 2015 */
+ Thu Jul 23 2015 */
 (function() {
   var modules;
 
@@ -161,8 +161,7 @@
 }).call(this);
 
 (function() {
-  var IjaxRequest,
-    __hasProp = {}.hasOwnProperty;
+  var IjaxRequest;
 
   IjaxRequest = (function() {
     IjaxRequest.prototype.IjaxResponse = modula.require('ijax/response');
@@ -170,11 +169,6 @@
     function IjaxRequest(path) {
       this.id = this._getGuid();
       this.path = path;
-      this.iframePath = this._updatePathParams(path, {
-        format: 'al',
-        i_req_id: this.id,
-        full_page: true
-      });
       this.isResolved = false;
       this.isRejected = false;
       this.iframe = this.createIframeRequest();
@@ -186,7 +180,7 @@
       if (appendToDom == null) {
         appendToDom = true;
       }
-      src = this.iframePath || 'javascript:false';
+      src = this.path || 'javascript:false';
       tmpElem = document.createElement('div');
       tmpElem.innerHTML = "<iframe name=\"" + this.id + "\" id=\"" + this.id + "\" src=\"" + src + "\">";
       iframe = tmpElem.firstChild;
@@ -253,19 +247,6 @@
 
     IjaxRequest.prototype._s4 = function() {
       return Math.floor((1 + Math.random()) * 0x10000).toString(16).substring(1);
-    };
-
-    IjaxRequest.prototype._updatePathParams = function(path, params) {
-      path;
-      var key, re, separator, value;
-      for (key in params) {
-        if (!__hasProp.call(params, key)) continue;
-        value = params[key];
-        re = new RegExp("([?|&])" + key + "=.*?(&|$)", 'i');
-        separator = path.indexOf('?') !== -1 ? '&' : '?';
-        path = re.test(path) ? path.replace(re, "$1" + key + "=" + value + "$2") : path + separator + key + '=' + value;
-      }
-      return path;
     };
 
     return IjaxRequest;

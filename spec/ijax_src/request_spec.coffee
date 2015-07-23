@@ -20,9 +20,6 @@ describe 'IjaxRequest', ->
     it 'saves provided path in @path, but with format, request id and full page params specified', ->
       expect(@request.path).to.be.eql "/some_path"
 
-    it 'saves path with format, request id and full page params specified in @iframePath', ->
-      expect(@request.iframePath).to.be.eql "/some_path?format=al&i_req_id=#{@request.id}&full_page=true"
-
     it 'creates isResolved and isRejected false flags', ->
       expect(@request.isResolved).to.be.false
       expect(@request.isRejected).to.be.false
@@ -59,7 +56,7 @@ describe 'IjaxRequest', ->
       expect(@request.fail(->)).to.be.equal @request
 
   describe '#createIframeRequest', ->
-    it 'creates iframe with @id in name/id and @iframePath in src', ->
+    it 'creates iframe with @id in name/id and @path in src', ->
       @request = new IjaxRequest('/some_path')
       @request.createIframeRequest.restore()
 
@@ -68,7 +65,7 @@ describe 'IjaxRequest', ->
       expect(iframe.style.display).to.be.eql 'none'
       expect(iframe.id).to.be.eql @request.id
       expect($(iframe).attr('name')).to.be.eql @request.id
-      expect($(iframe).attr('src')).to.be.eql @request.iframePath
+      expect($(iframe).attr('src')).to.be.eql @request.path
 
   describe '#registerResponse', ->
     it 'creates new IjaxResponse object in @response', ->

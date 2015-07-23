@@ -5,7 +5,6 @@ class IjaxRequest
   constructor: (path) ->
     @id = @_getGuid()
     @path = path
-    @iframePath = @_updatePathParams(path, format: 'al', i_req_id: @id, full_page: true)
 
     @isResolved = false
     @isRejected = false
@@ -14,7 +13,7 @@ class IjaxRequest
     @iframe.onload = _.bind(@updateIframeStatus, @)
 
   createIframeRequest: (appendToDom = true) ->
-    src = @iframePath or 'javascript:false'
+    src = @path or 'javascript:false'
 
     tmpElem = document.createElement('div')
     tmpElem.innerHTML = "<iframe name=\"#{@id}\" id=\"#{@id}\" src=\"#{src}\">"
@@ -65,20 +64,5 @@ class IjaxRequest
     Math.floor((1 + Math.random()) * 0x10000)
       .toString(16)
       .substring(1)
-
-  _updatePathParams: (path, params) ->
-    path
-
-    for own key, value of params
-      re = new RegExp("([?|&])#{key}=.*?(&|$)", 'i')
-      separator = if path.indexOf('?') isnt -1 then '&' else '?'
-
-      path =
-        if re.test(path)
-          path.replace(re, "$1#{key}=#{value}$2")
-        else
-          path + separator + key + '=' + value
-
-    path
 
 modula.export('ijax/request', IjaxRequest)
